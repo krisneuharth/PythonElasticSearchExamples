@@ -1,0 +1,6 @@
+# IMPORT
+fake-factory
+
+# SEARCH
+elasticsearch
+elasticsearch-dsl
