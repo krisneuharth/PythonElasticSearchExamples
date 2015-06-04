@@ -3,13 +3,21 @@ import uuid
 import random
 from faker import Factory
 from faker.providers import BaseProvider
+from elasticsearch import Elasticsearch
 
-fake = Factory.create()
-fake.seed(4321)
-
-ES_URL = ''
+# Helpful configs
 ES_INDEX = 'prospects'
+ES_DOC_TYPE = 'prospect'
 ES_DOC_COUNT = 100
+VERBOSE = False
+
+
+# Create our faker
+fake = Factory.create()
+fake.seed(43210)
+
+# Create our Elastic Search client
+es = Elasticsearch()
 
 
 class ProspectProvider(BaseProvider):
@@ -165,6 +173,11 @@ class Prospect(object):
 
 
 def generate_prospect(id):
+    """
+    Generate a fake Prospect
+    :param id
+    :return: Prospect
+    """
 
     prospect = Prospect()
     prospect.id = id
@@ -191,16 +204,51 @@ def generate_prospect(id):
 
 
 def index_prospect(prospect):
-    print prospect
+    """
+    Index the given Prospect in Elastic Search
+    :param prospect
+    """
+
+    try:
+        if VERBOSE:
+            print prospect
+        else:
+            print '.',
+
+        es.index(
+            index=ES_INDEX,
+            doc_type=ES_DOC_TYPE,
+            id=prospect.id,
+            body=prospect.as_dict()
+        )
+    except Exception as e:
+        # Don't care for demo purposes
+        pass
 
 
-#
-# Test Driver
-#
 if __name__ == "__main__":
+    """
+    Test Driver
+    """
 
+    # In case we had one already from a previous import
+    print 'Dropping index...'
+    es.indices.delete(index=ES_INDEX, ignore=[400, 404])
+
+    # Create the index anew
+    print 'Create new index...'
+    es.indices.create(index=ES_INDEX, ignore=400)
+
+    # Generate and index the prospects
     for id in range(1000, ES_DOC_COUNT * 100):
-        print id,
-
         customer = generate_prospect(id)
         index_prospect(customer)
+
+    # Refresh the index
+    es.indices.refresh(index=ES_INDEX)
+
+    # Find out how many we imported
+    count = str(es.count(index=ES_INDEX)['count'])
+
+    print '\n\nImported documents: ' + count
+    print 'Done.\n'
