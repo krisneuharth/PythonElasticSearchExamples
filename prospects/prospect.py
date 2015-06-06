@@ -3,10 +3,12 @@ import uuid
 import random
 from faker import Factory
 from faker.providers import BaseProvider
+from prospects.settings import FAKER_SEED
+
 
 # Create our faker
 fake = Factory.create()
-fake.seed(43210)
+fake.seed(FAKER_SEED)
 
 
 class ProspectProvider(BaseProvider):

@@ -1,12 +1,11 @@
 from elasticsearch import Elasticsearch
-from prospects.prospects import Prospect
 
+from prospects.prospect import Prospect
+from prospects.settings import (
+    ES_INDEX, ES_DOC_TYPE,
+    ES_DOC_COUNT, VERBOSE
+)
 
-# Helpful configs
-ES_INDEX = 'prospects'
-ES_DOC_TYPE = 'prospect'
-ES_DOC_COUNT = 100
-VERBOSE = False
 
 # Create our Elastic Search client
 es = Elasticsearch()
