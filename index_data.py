@@ -236,19 +236,22 @@ if __name__ == "__main__":
     es.indices.delete(index=ES_INDEX, ignore=[400, 404])
 
     # Create the index anew
-    print 'Create new index...'
+    print 'Creating new index...'
     es.indices.create(index=ES_INDEX, ignore=400)
 
     # Generate and index the prospects
+    print 'Generating and indexing...'
     for id in range(1000, ES_DOC_COUNT * 100):
-        customer = generate_prospect(id)
-        index_prospect(customer)
+        pp = generate_prospect(id)
+        index_prospect(pp)
 
     # Refresh the index
+    print '\n\nRefreshing the index...'
     es.indices.refresh(index=ES_INDEX)
 
     # Find out how many we imported
     count = str(es.count(index=ES_INDEX)['count'])
 
-    print '\n\nImported documents: ' + count
     print 'Done.\n'
+
+    print 'Imported documents: %s\n' % count
