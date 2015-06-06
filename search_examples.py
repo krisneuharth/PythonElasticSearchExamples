@@ -13,44 +13,52 @@ es = Elasticsearch()
 
 # http://elasticsearch-py.readthedocs.org/en/latest/api.html
 
+
 #
 # Basic examples from the docs
 #
 
 # Create a doc
-es.create()
+doc = es.create(
+    index=ES_INDEX,
+    doc_type=ES_DOC_TYPE,
+    body={
+
+    },
+    refresh=True
+)
 
 # Delete a doc by id
-es.delete()
+#es.delete()
 
 # Delete a doc by query
-es.delete_by_query()
+#es.delete_by_query()
 
 # Does a document exist?
-es.exists()
+#es.exists()
 
 # Explain how a document matches a query or not
-es.explain()
+#es.explain()
 
 # Get a doc by id
-es.get()
+#es.get()
 
 # Get a doc, limit the fields returned
-es.get(_source_exclude['', ''])
+#es.get(_source_exclude['', ''])
 
 # Try to get more like this
-es.mlt()
+#es.mlt()
 
 # Search, you know
-es.search()
+#es.search()
 
 # Do any matching docs match?
-es.search_exists()
+#es.search_exists()
 
-es.suggest()
+#es.suggest()
 
 # Update a doc
-es.update()
+#es.update()
 
 
 #
