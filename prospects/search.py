@@ -383,94 +383,92 @@ def prospect_search():
     """
 
     # Lucene syntax
-    # response = es.search(
-    #     index=ES_INDEX,
-    #     doc_type=ES_DOC_TYPE,
-    #     q='status:Active',
-    #     # Limit the number of results
-    #     size=2,
-    #     _source_include=[
-    #         'status', 'name', 'email_address'
-    #     ],
-    # )
-    #
-    # print_r('Found', response)
-    # print_r('Count', response['hits']['total'])
+    response = es.search(
+        index=ES_INDEX,
+        doc_type=ES_DOC_TYPE,
+        q='status:Active',
+        # Limit the number of results
+        size=2,
+        _source_include=[
+            'status', 'name', 'email_address'
+        ],
+    )
+
+    print_r('Found', response)
+    print_r('Count', response['hits']['total'])
 
     # DSL syntax
-    # response = es.search(
-    #     index=ES_INDEX,
-    #     doc_type=ES_DOC_TYPE,
-    #     body={
-    #         'query': {
-    #             'match': {'status': 'Active'}
-    #         }
-    #     },
-    #     # Limit the number of results
-    #     size=2,
-    #     _source_include=[
-    #         'status', 'name', 'email_address'
-    #     ],
-    # )
-    #
-    # print 'Found:', response
-    # print 'Count:', response['hits']['total']
+    response = es.search(
+        index=ES_INDEX,
+        doc_type=ES_DOC_TYPE,
+        body={
+            'query': {
+                'match': {'status': 'Active'}
+            }
+        },
+        # Limit the number of results
+        size=2,
+        _source_include=[
+            'status', 'name', 'email_address'
+        ],
+    )
+
+    print_r('Found', response)
+    print_r('Count', response['hits']['total'])
 
     # Find something more complicated
-    # response = es.search(
-    #     index=ES_INDEX,
-    #     doc_type=ES_DOC_TYPE,
-    #     body={
-    #         'query': {
-    #             'bool': {
-    #                 'must': [
-    #                     {'match': {'status': 'Active'}},
-    #                     {'match': {'sold': False}},
-    #                     {'match': {'new_used': 'New'}},
-    #                     {'match': {'has_manual_offers': True}},
-    #                     {'match': {'has_automated_offers': True}},
-    #                 ],
-    #                 'must_not': [
-    #                     {'match': {'make': 'MINI'}},
-    #                     {'match': {'year': '2015'}}
-    #                 ],
-    #                 'should': [
-    #                     {'match': {'model': 'X1'}},
-    #                     {'match': {'model': 'X3'}}
-    #                 ]
-    #             }
-    #         }
-    #     },
-    #     # Limit the number of results
-    #     size=2,
-    #     _source_include=[
-    #         'status', 'name', 'email_address'
-    #     ],
-    # )
-    #
-    # print_r('Found', response)
-    # print_r('Count', response['hits']['total'])
+    response = es.search(
+        index=ES_INDEX,
+        doc_type=ES_DOC_TYPE,
+        body={
+            'query': {
+                'bool': {
+                    'must': [
+                        {'match': {'status': 'Active'}},
+                        {'match': {'sold': False}},
+                        {'match': {'new_used': 'New'}},
+                        {'match': {'has_manual_offers': True}},
+                        {'match': {'has_automated_offers': True}},
+                    ],
+                    'must_not': [
+                        {'match': {'make': 'MINI'}},
+                        {'match': {'year': '2015'}}
+                    ],
+                    'should': [
+                        {'match': {'model': 'X1'}},
+                        {'match': {'model': 'X3'}}
+                    ]
+                }
+            }
+        },
+        # Limit the number of results
+        size=2,
+        _source_include=[
+            'status', 'name', 'email_address'
+        ],
+    )
 
-    #
-    # # Find all the prospects in May
-    # response = es.search(
-    #     index=ES_INDEX,
-    #     doc_type=ES_DOC_TYPE,
-    #     body={
-    #         'query': {
-    #             'range': {
-    #                 'prospect_date': {
-    #                     'from': '2015-05-01',
-    #                     'to': '2015-05-30'
-    #                 }
-    #             }
-    #         }
-    #     }
-    # )
-    #
-    # print 'Found:', response
-    # print 'Count:', response['hits']['total']
-    #
+    print_r('Found', response)
+    print_r('Count', response['hits']['total'])
+
+    # Find all the prospects in May
+    response = es.search(
+        index=ES_INDEX,
+        doc_type=ES_DOC_TYPE,
+        body={
+            'query': {
+                'range': {
+                    'prospect_date': {
+                        'from': '2015-05-01',
+                        'to': '2015-05-30'
+                    }
+                }
+            }
+        }
+    )
+
+    print_r('Found', response)
+    print_r('Count', response['hits']['total'])
 
     # Find all the prospects in May, who bought BMWs
     response = es.search(
@@ -552,129 +550,59 @@ def prospect_search_with_aggregations():
     print_r('Postal Code Buckets', response['aggregations']['per_postal_code'])
 
 
-#
-# Prospect Search examples
-#
-
-# Search by a field name: (Last Name, First Name, Email, ID, or Cert ID)
-def omni_search_bar(last_name, first_name, email_address, certificate_id):
-    response = es.search(
-        index=ES_INDEX,
-        doc_type=ES_DOC_TYPE,
-        body={
-            'query': {
-                'filtered': {
-                    'query': {
-                        'bool': {
-                            'should': [
-                                {'term': {'last_name': ''}},
-                                {'term': {'first_name': ''}},
-                                {'term': {'email_address': ''}},
-                                {'term': {'certificate_id': ''}},
-
-                            ]
-                        }
-                    }
-                }
-            }
-        }
-    )
-
-    print 'Found:', response
-    print 'Count:', response['hits']['total']
-
-# Search for all 'Active' Prospects
-
-# Search for all 'Sold' Prospects
-
-# Search for all 'Unassigned' Prospects
-
-# Get all Prospects for the recent months (not using aggregators)
-
-# Get all Prospects for the recent months (using aggregators)
-
-# Get all Prospects within a Date Range
-
-# Get all Prospects that are looking for a Make
-
-# Get all Prospects that are looking for a Make and Model
-
-# Get all Prospects looking for a New vehicle
-
-# Get all Prospects looking for a Used vehicle
-
-# Get all Prospects from a Program
-
-# Get all Prospects from a particular Postal Code
-
-
-#
-# Advanced Queries
-#
-
-# Get all Prospects that are Active, from a Program, Assigned To a Dealer, Looking for New
-
-# Get all Prospects that are Active, from a Program, Assigned To a Dealer, Looking for New/Used
-
-# Get all Prospects that are Active, from a Program, Assigned To a Dealer, Looking for New/Used, within a Date Range
-
-
-
 if __name__ == "__main__":
     """
     Test Driver
     """
 
     # Make sure we don't get conflicts
-    #delete_prospect_by_id()
+    delete_prospect_by_id()
 
     # Create new doc
-    #create_prospect()
+    create_prospect()
 
     # See if the doc exists now
-    #prospect_exists()
+    prospect_exists()
 
     # Get the doc again
-    #get_prospect_by_id()
+    get_prospect_by_id()
 
     # Get just the source data, not the doc
-    #get_prospect_source_by_id()
+    get_prospect_source_by_id()
 
     # Get the doc, only some fields
-    #get_prospect_by_id_exclude_fields()
-    #get_prospect_by_id_include_fields()
+    get_prospect_by_id_exclude_fields()
+    get_prospect_by_id_include_fields()
 
     # Get just the source data, only some fields
-    #get_prospect_source_by_id_exclude_fields()
-    #get_prospect_source_by_id_include_fields()
+    get_prospect_source_by_id_exclude_fields()
+    get_prospect_source_by_id_include_fields()
 
     # Update the doc
-    #update_prospect()
+    update_prospect()
 
-    #get_prospect_by_id()
+    get_prospect_by_id()
 
     # See the updates
-    #get_prospect_source_by_id_include_fields()
+    get_prospect_source_by_id_include_fields()
 
     # See if the doc exists now
-    #prospect_exists()
+    prospect_exists()
 
     # Delete the doc by id
-    #delete_prospect_by_id()
+    delete_prospect_by_id()
 
     # Delete docs matching a query
-    #delete_prospects_by_query()
+    delete_prospects_by_query()
 
     # Find some prospects
-    #prospect_search()
+    prospect_search()
 
-    #get_all_prospects()
+    get_all_prospects()
 
-    #get_all_active_prospects()
+    get_all_active_prospects()
 
-    #get_prospects_three_series()
-
-    #filter_active_in_date_range()
+    filter_active_in_date_range()
 
     # Find some prospects, with additional aggregations
     prospect_search_with_aggregations()
